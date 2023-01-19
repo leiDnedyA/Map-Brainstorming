@@ -1,92 +1,40 @@
 
-/**
- * function checkValidCoords
- * 
- * takes a pair of lat/long coordinates and makes sure that they're within the 
- * bounds of the lng/lat system. The longitude is restricted to [-85, 85]. If the 
- * latitude is outside of the proper boundaries, it will simply be set to the corresponding
- * boundary += the distance from it's current value to the max/min that it's breaking.
- * 
- * return value: [lng, lat]
- * 
- */
+const deg2rad = (deg) => (Math.PI * deg / 180);
+const rad2deg = (rad) => (180 * rad / Math.PI);
 
-function checkValidCoords(lng, lat){
 
-    let validLng = lng;
-    let validLat = lat;
+// Semi-axes of WGS - 84 geoidal reference
+const WGS84_a = 6378137.0  // Major semiaxis[m]
+const WGS84_b = 6356752.3  // Minor semiaxis[m]
 
-    if(lat < -180){
-        const dif = -180 - lat;
-        validLat = 180 - dif;
-    }else if(lat > 180){
-        const dif = lat - 180;
-        validLat = -180 + dif;
-    }
-
-    if(lng < -85){
-        validLng = -85;
-    }else if(lng > 85){
-        validLng = 85;
-    }
-
-    return [validLng, validLat];
-
+// Earth radius at given lattitude according to WGS-84 ellipsoid [m]
+function WGS84EarthRadius(lat){
+    // http://en.wikipedia.org/wiki/Earth_radius
+    const An = WGS84_a * WGS84_a * Math.cos(lat)
+    const Bn = WGS84_b * WGS84_b * Math.sin(lat)
+    const Ad = WGS84_a * Math.cos(lat)
+    const Bd = WGS84_b * Math.sin(lat)
+    return Math.sqrt((An * An + Bn * Bn) / (Ad * Ad + Bd * Bd))
 }
 
-/**
- * function getCoordinateBounds(long, lat, range)
- * 
- * generates a coordinate range of the following format, 
- * of the coordinates += range on either side
- * 
- * returns object:
- * {
- *  ne: [lng, lat],
- *  sw: [lng, lat]
- * }
- * 
- */
+// generates NE and SW bounds within "rangeInKM" KM of the given coordinates
+// returns: {ne: [lng, lat], sw: [lng, lat]}
+function getCoordinateBounds(lngInDeg, latInDeg, rangeInKM = 5) {
+    const lng = deg2rad(lngInDeg);
+    const lat = deg2rad(latInDeg);
+    const range = 1000 * rangeInKM;
 
-function getCoordinateBounds(lng, lat, range = 5) {
-
-    console.log(checkValidCoords(lng, lat))
+    const radius = WGS84EarthRadius(lat);
+    const pRadius = radius * Math.cos(lat);
 
     const bounds = {
-        ne: [lng + range, lat + range],
-        sw: [lng - range, lat - range]
+        ne: [rad2deg(lng + range / pRadius), rad2deg(lat + range/radius)],
+        sw: [rad2deg(lng - range/pRadius), rad2deg(lat - range/radius)]
     }
 
     return bounds;
 
 }
 
-/**
- * Like getCoordinateBounds, but adjusted for coords outside of normal lat/lng range
- * 
- */
-function getCheckedCoordinateBounds(lng, lat, range = 1) {
-
-    console.log(checkValidCoords(lng, lat))
-
-    const bounds = {
-        ne: checkValidCoords(lng + range, lat + range),
-        sw: checkValidCoords(lng - range, lat - range)
-    }
-
-    return bounds;
-
-}
-
-/**
- * function getBoundingBox(lng, lat, range)
- * 
- * generates a full bounding box from coord+range to coord-range
- * 
- */
-
-function getBoundingBox(lng, lat, range = .1){
-
-}
 
 export { getCoordinateBounds }

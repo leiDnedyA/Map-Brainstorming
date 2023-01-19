@@ -33,8 +33,10 @@
             const START_ZOOM = 5;
             const MAX_ZOOM = 19;
 
-            let boundsRange = 1;
+            let boundsRange = 50;
             let bounds = getCoordinateBounds(START_COORDS[0], START_COORDS[1], boundsRange);
+
+            console.log(bounds)
 
             var map = L.map("map").setView(START_COORDS, START_ZOOM);
 
