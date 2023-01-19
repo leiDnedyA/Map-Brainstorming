@@ -7,37 +7,11 @@ const options = {
 };
 
 /**
- * function getCoordinateBounds(long, lat, range)
- * 
- * returns object:
- * {
- *  ne_lat: 0,
-    ne_lng: 0,
-    sw_lat: 0,
-    sw_long: 0
- * }
- * 
- */
-
-function getCoordinateBounds(lon, lat, range = 5){
-
-    const bounds = {
-        ne_lat: 0,
-        ne_lng: 0,
-        sw_lat: 0,
-        sw_long: 0
-    }
-
-    //for loop that checks if coords are valid and adjusts them if need be
-
-}
-
-/**
  * function fetchWebcams(long, lat, range, zoom)
  * logs api response to console
  */
 
-function fetchWebcams(lon, lat, range, zoom){
+function fetchWebcams(lon, lat, range, zoom) {
 
     const bounds = getCoordinateBounds(lon, lat, range);
 
@@ -45,3 +19,5 @@ function fetchWebcams(lon, lat, range, zoom){
         .then(response => response.json())
         .then(response => console.log(response));
 }
+
+export default { fetchWebcams }
