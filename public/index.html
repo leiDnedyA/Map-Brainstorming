@@ -27,35 +27,32 @@
         <div id="map"></div>
         <script type="module">
             import { getCoordinateBounds } from "./src/coordinates.js";
+            import { getPlaceFromCoords} from "./src/geocodingAPI.js";
 
-            // const START_COORDS = [42.355, -71.07]; // Boston Common
-            const START_COORDS = [66.689, -180]; // Prime Meridian on land in Russa
+            const START_COORDS = [42.355, -71.07]; // Boston Common
+            // const START_COORDS = [66.689, -180]; // Prime Meridian on land in Russa
             const START_ZOOM = 5;
             const MAX_ZOOM = 19;
-
-            let boundsRange = 50;
-            let bounds = getCoordinateBounds(START_COORDS[0], START_COORDS[1], boundsRange);
-
-            console.log(bounds)
+            const MIN_ZOOM = 3;
 
             var map = L.map("map").setView(START_COORDS, START_ZOOM);
 
             L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
                 maxZoom: MAX_ZOOM,
+                minZoom: MIN_ZOOM,
                 attribution:
                     '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
             }).addTo(map);
 
-            
-            const rectangle = L.rectangle(Object.values(bounds), {color: 'Red', weight: 1}).addTo(map);
             const marker = L.marker(START_COORDS).addTo(map);
 
             const onMapClick = (e) => {
                 const coords = e.latlng;
-                bounds = getCoordinateBounds(coords.lat, coords.lng, boundsRange);
-                console.log(bounds);
                 marker.setLatLng(coords);
-                rectangle.setBounds(Object.values(bounds));
+                console.log(map.getZoom());
+                getPlaceFromCoords(coords.lat, coords.lng).then((placeJSON)=>{
+                    //
+                });
             };
 
             map.on("click", onMapClick);
