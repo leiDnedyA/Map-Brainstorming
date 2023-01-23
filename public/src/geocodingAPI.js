@@ -43,7 +43,7 @@ async function getPlaceFromCoords(lat, lng) {
     return new Promise((res, rej)=>{
         getRequest(url).then((response)=>{
             const resJSON = JSON.parse(response);
-            console.log(resJSON);
+            // console.log(resJSON);
             res(resJSON);
         })
     })

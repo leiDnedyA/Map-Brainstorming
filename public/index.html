@@ -28,6 +28,7 @@
         <script type="module">
             import { getCoordinateBounds } from "./src/coordinates.js";
             import { getPlaceFromCoords} from "./src/geocodingAPI.js";
+            import { queryMetAPI, queryArtwork} from "./src/metAPI.js";
 
             const START_COORDS = [42.355, -71.07]; // Boston Common
             // const START_COORDS = [66.689, -180]; // Prime Meridian on land in Russa
@@ -49,9 +50,15 @@
             const onMapClick = (e) => {
                 const coords = e.latlng;
                 marker.setLatLng(coords);
-                console.log(map.getZoom());
                 getPlaceFromCoords(coords.lat, coords.lng).then((placeJSON)=>{
-                    //
+                    const components = placeJSON.results[0].components;
+                    console.log(components);
+                    if(components.hasOwnProperty("country")){
+                        queryMetAPI(components.country)
+                            .then((metResponse)=>{
+                                console.log(metResponse);
+                            })
+                    }
                 });
             };
 
