@@ -26,7 +26,7 @@
     <body>
         <div id="map"></div>
         <div id="metDATA">
-            <img id="artImage" src="">
+            <img id="artImage" src="" width="500px">
             <button id="backButton">Back</button>
             <button id="nextButton">Next</button>
         </div>
@@ -57,11 +57,12 @@
                 marker.setLatLng(coords);
                 getPlaceFromCoords(coords.lat, coords.lng).then((placeJSON)=>{
                     const components = placeJSON.results[0].components;
-                    console.log(components);
+                    // console.log(components);
                     if(components.hasOwnProperty("country")){
                         queryMetAPI(components.country)
                             .then((metResponse)=>{
-                                console.log(metResponse);
+                                const resObj = JSON.parse(metResponse)
+                                artInterface.loadObjectIDs(resObj["objectIDs"]);
                             });
                     }
                 });
@@ -70,8 +71,6 @@
             map.on("click", (e)=>{
                 updateLocation(e.latlng);
             });
-
-            
 
             window.addEventListener('load', (e)=>{
                 artInterface.init(

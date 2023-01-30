@@ -1,3 +1,4 @@
+import {getRequest} from "./httpRequests.js";
 
 /**
  * DOCUMENTATION:
@@ -19,15 +20,10 @@
  * }
  */
 async function queryMetAPI(queryString){
-    return new Promise((res, rej)=>{
-        const req = new XMLHttpRequest();
-        req.addEventListener('load', ()=>{
-            res(JSON.parse(req.response));
-        });
-        queryString.replace(' ', '%20')
-        req.open("GET", `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${queryString}`);
-        req.send();
-    })
+    queryString.replace(' ', '%20');
+    const url = `https://collectionapi.metmuseum.org/public/collection/v1/search?q=${queryString}`;
+
+    return getRequest(url);
 }
 
 /**
@@ -38,7 +34,7 @@ async function queryMetAPI(queryString){
  */
 
 function queryArtwork(objectID){
-
+    return getRequest(`https://collectionapi.metmuseum.org/public/collection/v1/objects/${objectID}`);
 }
 
 export {queryMetAPI, queryArtwork}
