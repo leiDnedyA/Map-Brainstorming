@@ -19,16 +19,22 @@
         ></script>
         <style>
             #map {
-                height: 800px;
+                height: 600px;
             }
         </style>
     </head>
     <body>
         <div id="map"></div>
+        <div id="metDATA">
+            <img id="artImage" src="">
+            <button id="backButton">Back</button>
+            <button id="nextButton">Next</button>
+        </div>
         <script type="module">
             import { getCoordinateBounds } from "./src/coordinates.js";
             import { getPlaceFromCoords} from "./src/geocodingAPI.js";
             import { queryMetAPI, queryArtwork} from "./src/metAPI.js";
+            import { artInterface } from "./src/artInterface.js";
 
             const START_COORDS = [42.355, -71.07]; // Boston Common
             // const START_COORDS = [66.689, -180]; // Prime Meridian on land in Russa
@@ -47,8 +53,7 @@
 
             const marker = L.marker(START_COORDS).addTo(map);
 
-            const onMapClick = (e) => {
-                const coords = e.latlng;
+            const updateLocation = (coords) => {
                 marker.setLatLng(coords);
                 getPlaceFromCoords(coords.lat, coords.lng).then((placeJSON)=>{
                     const components = placeJSON.results[0].components;
@@ -57,12 +62,32 @@
                         queryMetAPI(components.country)
                             .then((metResponse)=>{
                                 console.log(metResponse);
-                            })
+                            });
                     }
                 });
             };
 
-            map.on("click", onMapClick);
+            map.on("click", (e)=>{
+                updateLocation(e.latlng);
+            });
+
+            
+
+            window.addEventListener('load', (e)=>{
+                artInterface.init(
+                    document.querySelector("#nextButton"),
+                    document.querySelector("#backButton"),
+                    document.querySelector("#artImage")
+                );
+                updateLocation(
+                    {
+                        lat: START_COORDS[0],
+                        lng: START_COORDS[1]
+                    }
+                );
+
+            });
+
         </script>
     </body>
 </html>
